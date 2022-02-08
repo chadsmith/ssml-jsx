@@ -1,39 +1,43 @@
-# Alexa [![Build Status](https://travis-ci.org/cameronhunter/alexa.svg?branch=master)](https://travis-ci.org/cameronhunter/alexa)
+# ssml-jsx [![NPM Version](https://img.shields.io/npm/v/ssml-jsx.svg)](https://npmjs.org/package/ssml-jsx)
 
-A monorepo of libraries used to build both custom skills and smart home skills
-for the Amazon Echo.
+Write [SSML](https://www.w3.org/TR/speech-synthesis/) inline within JavaScript. SSML is used in both
+[Amazon Alexa](https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/speech-synthesis-markup-language-ssml-reference)
+and [Google Home](https://developers.google.com/actions/reference/ssml) devices to provide tight control over device
+speech.
 
-## Libraries
+## Setup
 
-### [alexa-annotations](https://github.com/cameronhunter/alexa/tree/master/packages/alexa-annotations)
-[![NPM Version](https://img.shields.io/npm/v/alexa-annotations.svg)](https://npmjs.org/package/alexa-annotations)
+You can use SSML directly in source code by including
+`babel-plugin-transform-jsx` in your Babel configuration and importing `ssml` from `ssml-jsx`.
 
-Provides ES7 annotations for declaratively building both custom skills and smart
-home skills for the Echo. These skills are designed to be run on AWS Lambda. Try
-it out in the [Playground](https://cameronhunter.github.io/alexa-playground/).
+```bash
+$ npm install --save-dev babel-plugin-transform-jsx
+$ npm install --save ssml-jsx
+```
 
-### [alexa-constants](https://github.com/cameronhunter/alexa/tree/master/packages/alexa-constants)
-[![NPM Version](https://img.shields.io/npm/v/alexa-constants.svg)](https://npmjs.org/package/alexa-constants)
+`.babelrc`:
+```json
+{
+  "plugins": [
+    ["transform-jsx", { "function": "ssml", "useVariables": true }]
+  ]
+}
+```
 
-Provides constants commonly used in Amazon Alexa requests and responses.
+## Usage
 
-### [alexa-request](https://github.com/cameronhunter/alexa/tree/master/packages/alexa-request)
-[![NPM Version](https://img.shields.io/npm/v/alexa-request.svg)](https://npmjs.org/package/alexa-request)
+```javascript
+import ssml, { renderToString } from 'ssml-jsx';
 
-Provides a chainable pattern for building requests that skills would receive via
-AWS Lambda. This library is mostly used to build test requests for end-to-end
-testing of skills.
+// Author SSML directly as JSX
+const speechSSML = (
+  <speak>
+    <p>Hello world!</p>
+    <break time='2s' />
+    <p>What would you like to do today?</p>
+  </speak>
+);
 
-### [alexa-response](https://github.com/cameronhunter/alexa/tree/master/packages/alexa-response)
-[![NPM Version](https://img.shields.io/npm/v/alexa-response.svg)](https://npmjs.org/package/alexa-response)
-
-Provides a chainable pattern for building responses for skill intents and smart
-home directives. Easily create speech, cards, and question responses as well as
-smart home responses.
-
-### [ssml-jsx](https://github.com/cameronhunter/alexa/tree/master/packages/ssml-jsx)
-[![NPM Version](https://img.shields.io/npm/v/ssml-jsx.svg)](https://npmjs.org/package/ssml-jsx)
-
-Alexa supports speech via simple strings, but it also supports more complex
-speech defined in SSML. This library allows developers to write valid SSML as
-JSX inline with their JavaScript.
+// Render SSML to a string
+const speechString = renderToString(speechSSML);
+```
